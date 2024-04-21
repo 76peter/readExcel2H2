@@ -34,8 +34,10 @@
                     <div class="layui-input-prefix">
                         <i class="layui-icon layui-icon-username"></i>
                     </div>
-                    <input type="text" name="name" value="" placeholder="请输入名称" class="layui-input"
-                           lay-affix="clear">
+
+                    <select id="RiverTypeLevel" name="name" value="" placeholder="请输入名称" class="layui-select">
+                        <option value="1">--全部--</option>
+                    </select>
                 </div>
             </div>
 
@@ -52,6 +54,7 @@
 <script>
     var height = 400;
     var baseUrl = 'http://localhost:8088';
+
     layui.use('table', function () {
         var form = layui.form;
         var table = layui.table;
@@ -117,6 +120,23 @@
             return false;
         });
 
+        $.ajax({
+            //动态获取下拉选项的接口，返回数据主要是id+name
+            url: baseUrl + '/excel/doQuery',
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                let str="<option value=''>全部</option>";
+                for(let i of data){
+                    //组装数据
+                    str+=`<option value='${i.gys}'>${i.gys}</option>`;
+                }
+                //jquery赋值方式
+                $("#RiverTypeLevel").html(str);
+                //重新渲染生效
+                form.render();
+            }
+        });
 
     });
 </script>

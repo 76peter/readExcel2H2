@@ -12,12 +12,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,14 +40,15 @@ public class ExcelServiceImpl implements ExcelService {
             reader.addHeaderAlias("是否通过（成交）","sfcj");
             reader.addHeaderAlias("成交金额","cjj");
             List<Quotation> quotations = reader.readAll(Quotation.class);
-            quotationRepository.saveAllAndFlush(quotations);
+            ArrayList<Quotation> guolv = quotations.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(s -> s.getDh() + ";" + s.getGys()))), ArrayList::new));
+            quotationRepository.saveAllAndFlush(guolv);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    public List<Quotation> findByGysContains(String name){
-        return quotationRepository.findByGysContains(name);
+    public List<Quotation> findByGysContains(){
+        return quotationRepository.findBySfcj("通过");
     }
 
     public JSONObject findByGys(String name){

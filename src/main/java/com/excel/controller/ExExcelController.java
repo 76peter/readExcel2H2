@@ -20,10 +20,10 @@ public class ExExcelController {
     private ExcelService excelService;
 
     @GetMapping("/doQuery")
-    @ApiOperation("查询接口")
+    @ApiOperation("查询接口通过的公司")
     @ResponseBody
-    public List<Quotation> doQuery(String name){
-        return excelService.findByGysContains(name);
+    public List<Quotation> doQuery(){
+        return excelService.findByGysContains();
     }
 
     @GetMapping("/findByGys")
@@ -32,6 +32,5 @@ public class ExExcelController {
     public JSONObject findByGys(String name){
         return excelService.findByGys(name);
     }
-
 
 }

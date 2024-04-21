@@ -11,7 +11,7 @@ public interface ExcelService {
      * 查询全部
      * @return
      */
-    List<Quotation> findByGysContains(String name);
+    List<Quotation> findByGysContains();
 
     /**
      * 根据公司名称统计中标数量和陪标公司

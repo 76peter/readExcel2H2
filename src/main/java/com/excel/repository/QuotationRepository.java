@@ -9,6 +9,8 @@ public interface QuotationRepository extends JpaRepository<Quotation, Long> {
 
     List<Quotation> findByGysContains(String gys);
 
+    List<Quotation> findBySfcj(String sfcj);
+
     List<Quotation> findByGys(String gys);
 
     List<Quotation> findByDhAndAndSfcj(String dh,String sfcj);
