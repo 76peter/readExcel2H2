@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="./layui/css/layui.css">
+    <style>
+        html, body {
+            width: 100%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .layui-layout-admin .layui-body {
+            padding: 20px;
+            left: 0;
+        }
+
+    </style>
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">报表系统</div>
+    </div>
+
+    <div class="layui-body">
+        <form class="layui-form layui-row layui-col-space16">
+            <div class="layui-col-md2 ">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-username"></i>
+                    </div>
+                    <input type="text" name="name" value="" placeholder="请输入名称" class="layui-input"
+                           lay-affix="clear">
+                </div>
+            </div>
+
+            <div class="layui-btn-container layui-margin-2">
+                <button class="layui-btn" lay-submit lay-filter="demo-table-search">搜索</button>
+            </div>
+        </form>
+        <table id="table"></table>
+        <table id="table1"></table>
+    </div>
+
+</div>
+<script src="./layui/layui.js"></script>
+<script>
+    var height = 400;
+    var baseUrl = 'http://localhost';
+    layui.use('table', function () {
+        var form = layui.form;
+        var table = layui.table;
+        var $ = layui.$;
+        table.render({
+            elem: '#table'
+            , height
+            , page: true
+            , cols: [[
+                {type: 'numbers', title: '序号', width: 80}
+                , {field: 'dh', title: '询价单号'}
+                , {field: 'mc', title: '名称', sort: true}
+                , {field: 'sfzb', title: '是否中标', sort: true}
+                , {field: 'zbj', title: '中标金额', sort: true}
+                , {
+                    field: 'pbdw', title: '陪标单位', template: function (data) {
+                        return data.pbdw.map(dw => '<span class="layui-badge layui-bg-gray">' + dw + '</span>')
+                    }
+                },
+            ]],
+            data: [],
+            limits: [20, 30, 50],
+            limit: 20
+        });
+        table.render({
+            elem: '#table1'
+            , height
+            , page: true
+            , cols: [[
+                {type: 'numbers', title: '序号', width: 80}
+                , {field: 'dwmc', title: '陪标单位'}
+                , {field: 'cs', title: '陪标次数', sort: true}
+            ]],
+            data: [],
+            limits: [20, 30, 50],
+            limit: 20
+        });
+        form.on('submit(demo-table-search)', function (data) {
+            var field = data.field;
+            $.ajax({
+                url: baseUrl + '/excel/findByGys',
+                async: true,
+                type: 'get',
+                data: field,
+                responseType: 'json',
+                success: function (result) {
+                    var peibiaoVos = result.peibiaoVos;
+                    var baobiaoVos = result.baobiaoVos;
+                    table.reload('table', {
+                        page: {
+                            curr: 1
+                        },
+                        data: baobiaoVos
+                    });
+                    table.reload('table1', {
+                        page: {
+                            curr: 1
+                        },
+                        data: peibiaoVos
+                    });
+                }
+            })
+            return false;
+        });
+
+
+    });
+</script>
+</body>
+</html>
